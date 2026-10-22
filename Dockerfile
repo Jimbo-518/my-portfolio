@@ -43,8 +43,8 @@ RUN a2enmod rewrite
 ENV PORT=10000
 EXPOSE 10000
 
-# Configurar el puerto en Apache de forma limpia sin usar sed
-RUN echo "Listen ${PORT}" > /etc/apache2/ports.conf
+# Configurar Apache para escuchar en todas las interfaces en el puerto asignado
+RUN echo "Listen 0.0.0.0:${PORT}" > /etc/apache2/ports.conf
 
 # Reescribir el VirtualHost apuntando al puerto correcto
 RUN echo '<VirtualHost *:'${PORT}'>' > /etc/apache2/sites-available/000-default.conf && \
