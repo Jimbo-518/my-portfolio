@@ -43,9 +43,16 @@ RUN a2enmod rewrite
 ENV PORT=10000
 EXPOSE 10000
 
-# Escribir directamente el puerto correcto en la configuración de Apache
-RUN echo "Listen ${PORT}" > /etc/apache2/ports.conf && \
-    sed -i "s/:80/:\\${PORT}/g" /etc/apache2/sites-available/000-default.conf
+# Configurar el puerto en Apache de forma limpia sin usar sed
+RUN echo "Listen ${PORT}" > /etc/apache2/ports.conf
+
+# Reescribir el VirtualHost apuntando al puerto correcto
+RUN echo '<VirtualHost *:'${PORT}'>' > /etc/apache2/sites-available/000-default.conf && \
+    echo '    ServerAdmin webmaster@localhost' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '    DocumentRoot /var/www/html/public' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '    ErrorLog ${APACHE_LOG_DIR}/error.log' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined' >> /etc/apache2/sites-available/000-default.conf && \
+    echo '</VirtualHost>' >> /etc/apache2/sites-available/000-default.conf
 
 # Iniciar Apache de forma nativa
 CMD ["apache2-foreground"]
