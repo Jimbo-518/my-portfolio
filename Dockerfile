@@ -43,7 +43,7 @@ RUN a2enmod rewrite
 ENV PORT=10000
 EXPOSE 10000
 
-# Script en línea para inyectar el puerto dinámico de Render en Apache y arrancar
+# Script para inyectar el puerto dinámico de Render y arrancar Apache correctamente
 CMD sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf && \
     sed -i "s/*:80/*:${PORT}/g" /etc/apache2/sites-available/000-default.conf && \
-    apache2-ctl -D FOREGROUND
+    apache2-foreground
