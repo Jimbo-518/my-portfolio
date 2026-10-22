@@ -49,4 +49,3 @@ RUN echo "Listen ${PORT}" > /etc/apache2/ports.conf && \
 
 # Iniciar Apache de forma nativa
 CMD ["apache2-foreground"]
-    apache2-foreground
