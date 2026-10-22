@@ -39,11 +39,14 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Habilitar mod_rewrite para las rutas amigables de Laravel
 RUN a2enmod rewrite
 
-# Exponer el puerto predeterminado que Render espera
+# Configurar el puerto para Render (por defecto 10000)
 ENV PORT=10000
 EXPOSE 10000
 
-# Script para inyectar el puerto dinámico de Render y arrancar Apache correctamente
-CMD sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf && \
-    sed -i "s/*:80/*:${PORT}/g" /etc/apache2/sites-available/000-default.conf && \
+# Escribir directamente el puerto correcto en la configuración de Apache
+RUN echo "Listen ${PORT}" > /etc/apache2/ports.conf && \
+    sed -i "s/:80/:\\${PORT}/g" /etc/apache2/sites-available/000-default.conf
+
+# Iniciar Apache de forma nativa
+CMD ["apache2-foreground"]
     apache2-foreground
