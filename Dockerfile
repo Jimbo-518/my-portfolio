@@ -43,5 +43,10 @@ RUN a2enmod rewrite
 ENV PORT=10000
 EXPOSE 10000
 
+# Crear la base de datos SQLite y dar permisos totales a storage y database
+RUN mkdir -p /var/www/html/database && \
+    touch /var/www/html/database/database.sqlite && \
+    chmod -R 777 /var/www/html/storage /var/www/html/database
+
 # Script de inicio que actualiza el puerto en los archivos de Apache justo antes de arrancar
 CMD sh -c "sed -i 's/80/'${PORT}'/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf && apache2-foreground"
